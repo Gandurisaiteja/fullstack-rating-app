@@ -1,13 +1,29 @@
-const db = require('../config/db');
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/db'); // Assuming sequelize connection is set in db.js
 
-const createUser = (user, callback) => {
-  const sql = 'INSERT INTO users (username, password, role) VALUES (?, ?, ?)';
-  db.query(sql, [user.username, user.password, user.role], callback);
-};
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.ENUM('user', 'store_owner', 'admin'),
+    defaultValue: 'user', // Default to user role
+  },
+});
 
-const getUserByUsername = (username, callback) => {
-  const sql = 'SELECT * FROM users WHERE username = ?';
-  db.query(sql, [username], callback);
-};
-
-module.exports = { createUser, getUserByUsername };
+module.exports = User;
